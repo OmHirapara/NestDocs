@@ -1,0 +1,66 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Test API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/tours": {
+      "get": {
+        "operationId": "ToursController_findAll",
+        "tags": ["Tours"],
+        "parameters": [
+          { "name": "page", "in": "query", "required": false, "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "description": "OK" } },
+        "security": []
+      },
+      "post": {
+        "operationId": "ToursController_create",
+        "tags": ["Tours"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateTourDto" }
+            }
+          }
+        },
+        "responses": { "201": { "description": "Created" } },
+        "security": [{ "BearerAuth": [] }]
+      }
+    },
+    "/tours/{id}": {
+      "get": {
+        "operationId": "ToursController_findOne",
+        "tags": ["Tours"],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "description": "OK" } },
+        "security": []
+      },
+      "delete": {
+        "operationId": "ToursController_remove",
+        "tags": ["Tours"],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": { "204": { "description": "No Content" } },
+        "security": []
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CreateTourDto": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "minLength": 3 },
+          "price": { "type": "number" }
+        },
+        "required": ["name", "price"]
+      }
+    }
+  }
+}

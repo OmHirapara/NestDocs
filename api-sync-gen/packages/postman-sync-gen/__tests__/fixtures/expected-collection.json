@@ -1,0 +1,77 @@
+{
+  "info": {
+    "name": "Test Collection",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [{ "key": "token", "value": "{{authToken}}", "type": "string" }]
+  },
+  "item": [
+    {
+      "name": "Tours",
+      "item": [
+        {
+          "name": "GET /tours — Find All",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/tours",
+              "host": ["{{baseUrl}}"],
+              "path": ["tours"],
+              "query": [{ "key": "page", "value": "", "disabled": true }]
+            },
+            "header": []
+          }
+        },
+        {
+          "name": "POST /tours — Create",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/tours",
+              "host": ["{{baseUrl}}"],
+              "path": ["tours"]
+            },
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{authToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": { "raw": { "language": "json" } }
+            }
+          }
+        },
+        {
+          "name": "GET /tours/:id — Find One",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/tours/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["tours", ":id"],
+              "variable": [{ "key": "id", "value": "" }]
+            },
+            "header": []
+          }
+        },
+        {
+          "name": "DELETE /tours/:id — Remove",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/tours/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["tours", ":id"],
+              "variable": [{ "key": "id", "value": "" }]
+            },
+            "header": []
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [{ "key": "baseUrl", "value": "http://localhost:3000" }]
+}

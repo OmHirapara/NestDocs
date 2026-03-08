@@ -1,0 +1,100 @@
+{
+  "controller": {
+    "name": "ToursController",
+    "prefix": "tours",
+    "routes": [
+      {
+        "method": "GET",
+        "path": "/",
+        "fullPath": "/tours",
+        "methodName": "findAll",
+        "expectedStatus": 200,
+        "isAuthenticated": false,
+        "parameters": [
+          { "name": "page", "location": "query", "type": "string", "required": false },
+          { "name": "limit", "location": "query", "type": "string", "required": false }
+        ]
+      },
+      {
+        "method": "GET",
+        "path": "/:id",
+        "fullPath": "/tours/:id",
+        "methodName": "findOne",
+        "expectedStatus": 200,
+        "isAuthenticated": false,
+        "parameters": [
+          { "name": "id", "location": "path", "type": "string", "required": true }
+        ]
+      },
+      {
+        "method": "POST",
+        "path": "/",
+        "fullPath": "/tours",
+        "methodName": "create",
+        "expectedStatus": 201,
+        "isAuthenticated": true,
+        "bodyType": "CreateTourDto",
+        "parameters": []
+      },
+      {
+        "method": "PUT",
+        "path": "/:id",
+        "fullPath": "/tours/:id",
+        "methodName": "update",
+        "expectedStatus": 200,
+        "isAuthenticated": false,
+        "bodyType": "CreateTourDto",
+        "parameters": [
+          { "name": "id", "location": "path", "type": "string", "required": true }
+        ]
+      },
+      {
+        "method": "DELETE",
+        "path": "/:id",
+        "fullPath": "/tours/:id",
+        "methodName": "remove",
+        "expectedStatus": 204,
+        "isAuthenticated": false,
+        "parameters": [
+          { "name": "id", "location": "path", "type": "string", "required": true }
+        ]
+      }
+    ]
+  },
+  "dto": {
+    "name": "CreateTourDto",
+    "properties": [
+      {
+        "name": "name",
+        "type": "string",
+        "required": true,
+        "minLength": 3,
+        "maxLength": 100
+      },
+      {
+        "name": "price",
+        "type": "number",
+        "required": true,
+        "min": 0,
+        "max": 999999
+      },
+      {
+        "name": "duration",
+        "type": "number",
+        "required": true,
+        "min": 1
+      },
+      {
+        "name": "category",
+        "type": "enum",
+        "required": true,
+        "enumValues": ["adventure", "cultural", "wildlife"]
+      },
+      {
+        "name": "description",
+        "type": "string",
+        "required": false
+      }
+    ]
+  }
+}
