@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, Query, UseGuards, HttpCode } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, Query, UseGuards, HttpCode } from './mock-decorators.js';
 import { CreateTourDto } from './sample-dto';
 
 @Controller('tours')

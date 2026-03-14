@@ -40,8 +40,8 @@ describe('RequestBuilder', () => {
     }));
 
     expect(item.request.url.variable).toBeDefined();
-    expect(item.request.url.variable!.length).toBe(1);
-    expect(item.request.url.variable![0]!.key).toBe('id');
+    expect(item.request.url.variable?.length).toBe(1);
+    expect(item.request.url.variable?.[0]?.key).toBe('id');
   });
 
   it('should add query params with disabled: true', () => {
@@ -53,8 +53,8 @@ describe('RequestBuilder', () => {
     }));
 
     expect(item.request.url.query).toHaveLength(2);
-    expect(item.request.url.query![0]!.disabled).toBe(true);
-    expect(item.request.url.query![0]!.key).toBe('page');
+    expect(item.request.url.query?.[0]?.disabled).toBe(true);
+    expect(item.request.url.query?.[0]?.key).toBe('page');
   });
 
   it('should include Content-Type header for POST requests', () => {
@@ -67,7 +67,7 @@ describe('RequestBuilder', () => {
 
     const contentType = item.request.header?.find((h) => h.key === 'Content-Type');
     expect(contentType).toBeDefined();
-    expect(contentType!.value).toBe('application/json');
+    expect(contentType?.value).toBe('application/json');
   });
 
   it('should include Authorization header for authenticated routes', () => {
@@ -81,7 +81,7 @@ describe('RequestBuilder', () => {
 
     const authHeader = item.request.header?.find((h) => h.key === 'Authorization');
     expect(authHeader).toBeDefined();
-    expect(authHeader!.value).toBe('Bearer {{authToken}}');
+    expect(authHeader?.value).toBe('Bearer {{authToken}}');
   });
 
   it('should include request body for POST with bodyType', () => {
@@ -93,7 +93,7 @@ describe('RequestBuilder', () => {
     }));
 
     expect(item.request.body).toBeDefined();
-    expect(item.request.body!.mode).toBe('raw');
-    expect(item.request.body!.options?.raw?.language).toBe('json');
+    expect(item.request.body?.mode).toBe('raw');
+    expect(item.request.body?.options?.raw?.language).toBe('json');
   });
 });

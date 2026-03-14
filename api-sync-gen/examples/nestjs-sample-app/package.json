@@ -1,0 +1,20 @@
+{
+  "name": "nestjs-sample-app",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Sample NestJS app for testing api-sync-gen",
+  "scripts": {
+    "build": "echo 'sample app — no build required'"
+  },
+  "dependencies": {
+    "@nestjs/common": "^10.0.0",
+    "class-validator": "^0.14.0",
+    "class-transformer": "^0.5.0",
+    "reflect-metadata": "^0.2.0"
+  },
+  "devDependencies": {
+    "@company/api-sync-core": "*",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.4.0"
+  }
+}

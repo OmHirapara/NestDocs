@@ -1,0 +1,66 @@
+name: Release & Sync
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  release:
+    name: Publish to npm
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+          registry-url: 'https://registry.npmjs.org'
+
+      - run: npm ci
+      - run: npm run build
+      - run: npm run test
+
+      - name: Create Release PR or Publish
+        uses: changesets/action@v1
+        with:
+          publish: npm run release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  sync-postman:
+    name: Push to Postman Team Workspace
+    runs-on: ubuntu-latest
+    needs: release
+    if: success()
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+      - run: npm ci && npm run build
+
+      - name: Generate and push to Postman
+        run: npx api-sync all --no-serve
+        env:
+          CLAUDE_API_KEY: ${{ secrets.CLAUDE_API_KEY }}
+          POSTMAN_API_KEY: ${{ secrets.POSTMAN_API_KEY }}
+          POSTMAN_WORKSPACE_ID: ${{ secrets.POSTMAN_WORKSPACE_ID }}
+          POSTMAN_COLLECTION_UID: ${{ secrets.POSTMAN_COLLECTION_UID }}
+
+      - name: Commit generated docs
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add docs/swagger.json docs/collection.json
+          git diff --staged --quiet || git commit -m "docs: auto-update swagger.json and collection.json [skip ci]"
+          git push

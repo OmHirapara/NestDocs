@@ -1,7 +1,7 @@
 import OpenAI from 'openai';
 import type { AiProvider } from './AiProvider.js';
 import type { RouteDefinition } from '../types/endpoint.types.js';
-import type { DtoSchema } from '../types/schema.types.js';
+import type { DtoSchema, PropertyType } from '../types/schema.types.js';
 import { AiProviderError } from '../errors.js';
 
 /**
@@ -75,7 +75,7 @@ export class OpenAiProvider implements AiProvider {
   }
 
   /** @inheritdoc */
-  public async generatePreRequestScript(route: RouteDefinition): Promise<string> {
+  public async generatePreRequestScript(_route: RouteDefinition): Promise<string> {
     const prompt = `Write a Postman pre-request script in JavaScript. Set Authorization header from pm.environment.get('authToken'). Return ONLY JavaScript code.`;
 
     return this.sendMessage(prompt, false);
@@ -99,7 +99,7 @@ export class OpenAiProvider implements AiProvider {
 
       const properties = Object.entries(parsed.properties).map(([name, def]) => ({
         name,
-        type: (def.type ?? 'unknown') as import('../types/schema.types.js').PropertyType,
+        type: (def.type ?? 'unknown') as PropertyType,
         required: true,
       }));
 

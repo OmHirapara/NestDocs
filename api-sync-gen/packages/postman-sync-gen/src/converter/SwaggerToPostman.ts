@@ -2,7 +2,7 @@ import type { OpenAPIV3 } from 'openapi-types';
 import type { RouteDefinition, Logger } from '@company/api-sync-core';
 import type { RequestBuilder } from './RequestBuilder.js';
 import type { AuthBuilder } from './AuthBuilder.js';
-import type { PostmanCollection, PostmanFolder, PostmanItem } from '../types.js';
+import type { PostmanCollection, PostmanFolder } from '../types.js';
 
 /** Resolved postman config subset. */
 interface PostmanConvertConfig {
@@ -105,7 +105,7 @@ export class SwaggerToPostman {
     }
 
     const statusCodes = Object.keys(operation.responses ?? {});
-    const expectedStatus = statusCodes.length > 0 ? parseInt(statusCodes[0]!, 10) : 200;
+    const expectedStatus = statusCodes.length > 0 ? parseInt(statusCodes[0] as string, 10) : 200;
 
     const route: RouteDefinition = {
       method: method as RouteDefinition['method'],

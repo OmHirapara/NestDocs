@@ -1,4 +1,4 @@
-import type { PostmanAuth, PostmanAuthParam } from '../types.js';
+import type { PostmanAuth } from '../types.js';
 
 type AuthType = 'bearer' | 'apiKey' | 'both' | 'none';
 
