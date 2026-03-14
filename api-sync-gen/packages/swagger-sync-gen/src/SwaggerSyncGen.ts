@@ -77,7 +77,7 @@ export class SwaggerSyncGen {
     // Step 6: Validate spec
     const validationResult = await this.specValidator.validate(spec);
     if (!validationResult.ok) {
-      return validationResult;
+      return { ok: false, error: validationResult.error };
     }
 
     // Step 7: Write to disk

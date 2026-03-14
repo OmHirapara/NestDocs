@@ -11,5 +11,8 @@ export { SchemaBuilder } from './builder/SchemaBuilder.js';
 export { PathBuilder } from './builder/PathBuilder.js';
 export { SecurityBuilder } from './builder/SecurityBuilder.js';
 
+// ─── Validators ─────────────────────────────────────────────────────────────
+export { SpecValidator } from './validator/SpecValidator.js';
+
 // ─── Errors ───────────────────────────────────────────────────────────────────
 export { OpenApiBuilderError, SpecValidationError, SwaggerUiServerError } from './errors.js';

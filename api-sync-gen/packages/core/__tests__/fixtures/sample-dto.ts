@@ -11,19 +11,19 @@ export class CreateTourDto {
   @IsString()
   @MinLength(3)
   @MaxLength(100)
-  name: string;
+  name!: string;
 
   @IsNumber()
   @Min(0)
   @Max(999999)
-  price: number;
+  price!: number;
 
   @IsNumber()
   @Min(1)
-  duration: number;
+  duration!: number;
 
   @IsEnum(TourCategory)
-  category: TourCategory;
+  category!: TourCategory;
 
   @IsOptional()
   @IsString()

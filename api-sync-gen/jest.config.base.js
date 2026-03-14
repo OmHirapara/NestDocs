@@ -4,7 +4,7 @@ module.exports = {
   roots: ['<rootDir>/src', '<rootDir>/__tests__'],
   testMatch: ['**/__tests__/**/*.test.ts'],
   collectCoverageFrom: ['src/**/*.ts', '!src/**/index.ts'],
-  coverageThresholds: {
+  coverageThreshold: {
     global: {
       statements: 80,
       branches: 75,

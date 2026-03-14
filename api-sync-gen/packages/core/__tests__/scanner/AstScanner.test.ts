@@ -1,14 +1,8 @@
 import { Project } from 'ts-morph';
 import * as path from 'node:path';
-import { AstScanner } from '../../src/scanner/AstScanner';
-import { createLogger } from '../../src/logger/Logger';
-
-const logger = createLogger('error');
-const fixturesDir = path.resolve(__dirname, '..', 'fixtures');
-
 describe('AstScanner', () => {
   describe('findControllerFiles', () => {
-    it('should find files containing @Controller decorator', async () => {
+    it('should find files containing @Controller decorator', () => {
       const project = new Project({
         useInMemoryFileSystem: true,
         compilerOptions: {
@@ -48,12 +42,12 @@ describe('AstScanner', () => {
       );
 
       expect(controllerClasses).toHaveLength(1);
-      expect(controllerClasses[0]!.getName()).toBe('ToursController');
+      expect(controllerClasses[0]?.getName()).toBe('ToursController');
     });
   });
 
   describe('findDtoFiles', () => {
-    it('should find files containing class-validator decorators', async () => {
+    it('should find files containing class-validator decorators', () => {
       const project = new Project({
         useInMemoryFileSystem: true,
         compilerOptions: {
@@ -97,7 +91,7 @@ describe('AstScanner', () => {
       });
 
       expect(dtoFiles).toHaveLength(1);
-      expect(dtoFiles[0]!.getBaseName()).toBe('create-tour.dto.ts');
+      expect(dtoFiles[0]?.getBaseName()).toBe('create-tour.dto.ts');
     });
   });
 

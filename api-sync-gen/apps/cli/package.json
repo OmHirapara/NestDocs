@@ -1,0 +1,33 @@
+{
+  "name": "api-sync",
+  "version": "1.0.0",
+  "description": "CLI — one command to generate Swagger + Postman from NestJS code",
+  "type": "module",
+  "bin": {
+    "api-sync": "./dist/index.js"
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "lint": "eslint src --ext .ts",
+    "lint:fix": "eslint src --ext .ts --fix",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@company/api-sync-core": "*",
+    "@company/postman-sync-gen": "*",
+    "@company/swagger-sync-gen": "*",
+    "chalk": "^5.3.0",
+    "commander": "^12.0.0",
+    "ora": "^8.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.4.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

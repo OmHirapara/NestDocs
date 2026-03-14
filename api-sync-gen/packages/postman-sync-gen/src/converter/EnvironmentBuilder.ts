@@ -1,4 +1,4 @@
-import type { PostmanEnvironment, PostmanEnvValue } from '../types.js';
+import type { PostmanEnvironment } from '../types.js';
 
 /**
  * Builds Postman Environment files from application config.

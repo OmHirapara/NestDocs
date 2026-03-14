@@ -6,19 +6,12 @@ import type { NewmanRunSummary } from '../types.js';
 interface NewmanRunOptions {
   collection: string;
   environment?: string;
-  reporters?: readonly string[];
+  reporters?: string[];
 }
 
-/** Newman callback summary (minimal type). */
-interface NewmanCallbackSummary {
-  run: {
-    stats: {
-      requests: { total: number; failed: number };
-      assertions: { total: number; failed: number };
-    };
-    failures: readonly unknown[];
-  };
-}
+import type { NewmanRunSummary as NewmanImportRunSummary } from 'newman';
+
+// We will use import('newman').NewmanRunSummary directly rather than duplicating the type.
 
 /**
  * Runs Postman collections using Newman for automated API testing.
@@ -41,13 +34,8 @@ export class NewmanRunner {
     return new Promise((resolve) => {
       this.logger.info('Running Postman collection with Newman...');
 
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const newmanModule = require('newman') as {
-        run: (
-          options: NewmanRunOptions,
-          callback: (err: Error | null, summary: NewmanCallbackSummary) => void,
-        ) => void;
-      };
+      // Dynamically import newman to avoid bundling/typing issues
+      import('newman').then((newmanModule) => {
 
       const options: NewmanRunOptions = {
         collection: collectionPath,
@@ -58,7 +46,7 @@ export class NewmanRunner {
         options.environment = environmentPath;
       }
 
-      newmanModule.run(options, (err: Error | null, summary: NewmanCallbackSummary) => {
+      newmanModule.run(options, (err: Error | null, summary: NewmanImportRunSummary) => {
         if (err) {
           resolve({ ok: false, error: new NewmanRunError(err.message, 0, err) });
           return;
@@ -79,18 +67,22 @@ export class NewmanRunner {
           run: {
             stats: {
               requests: {
-                total: summary.run.stats.requests.total,
-                failed: summary.run.stats.requests.failed,
+                total: summary.run.stats.requests.total ?? 0,
+                failed: summary.run.stats.requests.failed ?? 0,
               },
               assertions: {
-                total: summary.run.stats.assertions.total,
-                failed: summary.run.stats.assertions.failed,
+                total: summary.run.stats.assertions.total ?? 0,
+                failed: summary.run.stats.assertions.failed ?? 0,
               },
             },
             failures: [...summary.run.failures],
           },
         };
         resolve({ ok: true, value: result });
+        });
+      }).catch((err: Error) => {
+        this.logger.error(`Failed to load newman: ${err.message}`);
+        resolve({ ok: false, error: new NewmanRunError('Failed to load newman package', 0, err) });
       });
     });
   }

@@ -1,4 +1,3 @@
-import type { OpenAPIV3 } from 'openapi-types';
 
 /**
  * Postman Collection v2.1 types.

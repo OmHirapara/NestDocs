@@ -1,4 +1,5 @@
-import { Project, SourceFile, SyntaxKind } from 'ts-morph';
+import { Project } from 'ts-morph';
+import type { SourceFile } from 'ts-morph';
 import * as path from 'node:path';
 import * as fs from 'node:fs';
 import type { Logger } from '../logger/Logger.js';
@@ -59,7 +60,7 @@ export class AstScanner {
    * Returns all source files in the project, excluding files that match
    * the configured `exclude` patterns as well as test files and node_modules.
    */
-  public async getSourceFiles(): Promise<SourceFile[]> {
+  public getSourceFiles(): SourceFile[] {
     const allFiles = this.project.getSourceFiles();
 
     return allFiles.filter((sf) => {
@@ -71,8 +72,8 @@ export class AstScanner {
   /**
    * Finds all source files containing a `@Controller()` decorator.
    */
-  public async findControllerFiles(): Promise<SourceFile[]> {
-    const sources = await this.getSourceFiles();
+  public findControllerFiles(): SourceFile[] {
+    const sources = this.getSourceFiles();
 
     return sources.filter((sf) => {
       const classes = sf.getClasses();
@@ -86,8 +87,8 @@ export class AstScanner {
    * Finds all source files containing DTO classes
    * (i.e. classes with class-validator decorators).
    */
-  public async findDtoFiles(): Promise<SourceFile[]> {
-    const sources = await this.getSourceFiles();
+  public findDtoFiles(): SourceFile[] {
+    const sources = this.getSourceFiles();
 
     const classValidatorDecorators = new Set([
       'IsString',
@@ -126,8 +127,8 @@ export class AstScanner {
   /**
    * Finds all source files containing TypeORM `@Entity` or Mongoose `@Schema` decorated classes.
    */
-  public async findEntityFiles(): Promise<SourceFile[]> {
-    const sources = await this.getSourceFiles();
+  public findEntityFiles(): SourceFile[] {
+    const sources = this.getSourceFiles();
 
     return sources.filter((sf) => {
       const classes = sf.getClasses();

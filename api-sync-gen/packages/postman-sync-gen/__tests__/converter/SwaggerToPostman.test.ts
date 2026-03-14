@@ -27,7 +27,7 @@ describe('SwaggerToPostman', () => {
   it('should group requests by tag into folders', () => {
     const collection = converter.convert(sampleSwagger as unknown as OpenAPIV3.Document);
     expect(collection.item.length).toBeGreaterThan(0);
-    expect(collection.item[0]!.name).toBe('Tours');
+    expect(collection.item[0]?.name).toBe('Tours');
   });
 
   it('should include all routes from the swagger spec', () => {
@@ -39,12 +39,12 @@ describe('SwaggerToPostman', () => {
   it('should include baseUrl variable', () => {
     const collection = converter.convert(sampleSwagger as unknown as OpenAPIV3.Document);
     expect(collection.variable).toBeDefined();
-    expect(collection.variable![0]!.key).toBe('baseUrl');
+    expect(collection.variable?.[0]?.key).toBe('baseUrl');
   });
 
   it('should set bearer auth on the collection', () => {
     const collection = converter.convert(sampleSwagger as unknown as OpenAPIV3.Document);
     expect(collection.auth).toBeDefined();
-    expect(collection.auth!.type).toBe('bearer');
+    expect(collection.auth?.type).toBe('bearer');
   });
 });
