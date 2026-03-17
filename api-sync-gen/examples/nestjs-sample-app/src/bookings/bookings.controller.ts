@@ -5,33 +5,33 @@ import { CreateBookingDto } from './dto/create-booking.dto';
 export class BookingsController {
   @Get()
   @UseGuards()
-  findAll() {
+  findAll(): unknown[] {
     return [];
   }
 
   @Get(':id')
   @UseGuards()
-  findOne(@Param('id') _id: string) {
+  findOne(@Param('id') _id: string): Record<string, unknown> {
     return {};
   }
 
   @Post()
   @HttpCode(201)
   @UseGuards()
-  create(@Body() _createBookingDto: CreateBookingDto) {
+  create(@Body() _createBookingDto: CreateBookingDto): Record<string, unknown> {
     return {};
   }
 
   @Patch(':id/cancel')
   @UseGuards()
-  cancel(@Param('id') _id: string) {
+  cancel(@Param('id') _id: string): Record<string, unknown> {
     return {};
   }
 
   @Delete(':id')
   @HttpCode(204)
   @UseGuards()
-  remove(@Param('id') _id: string) {
+  remove(@Param('id') _id: string): void {
     return;
   }
 }

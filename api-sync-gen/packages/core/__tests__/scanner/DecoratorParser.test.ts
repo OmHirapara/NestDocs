@@ -31,8 +31,8 @@ describe('DecoratorParser', () => {
     it('should extract controller prefix "tours"', () => {
       const project = createProjectWithFixture('sample-controller.ts');
       const sourceFile = project.getSourceFiles()[0];
-      expect(sourceFile).toBeDefined();
-      const controllers = parser.parseControllers(sourceFile!);
+      if (!sourceFile) throw new Error('Source file not found');
+      const controllers = parser.parseControllers(sourceFile);
 
       expect(controllers).toHaveLength(1);
       expect(controllers[0]?.prefix).toBe('tours');
@@ -42,7 +42,8 @@ describe('DecoratorParser', () => {
     it('should extract 5 routes', () => {
       const project = createProjectWithFixture('sample-controller.ts');
       const sourceFile = project.getSourceFiles()[0];
-      const controllers = parser.parseControllers(sourceFile!);
+      if (!sourceFile) throw new Error('Source file not found');
+      const controllers = parser.parseControllers(sourceFile);
       const routes = controllers[0]?.routes;
 
       expect(routes).toHaveLength(5);
@@ -51,7 +52,8 @@ describe('DecoratorParser', () => {
     it('should extract correct HTTP methods', () => {
       const project = createProjectWithFixture('sample-controller.ts');
       const sourceFile = project.getSourceFiles()[0];
-      const controllers = parser.parseControllers(sourceFile!);
+      if (!sourceFile) throw new Error('Source file not found');
+      const controllers = parser.parseControllers(sourceFile);
       const routes = controllers[0]?.routes ?? [];
 
       const methods = routes.map((r) => r.method);
@@ -61,7 +63,8 @@ describe('DecoratorParser', () => {
     it('should set POST route expectedStatus to 201 from @HttpCode', () => {
       const project = createProjectWithFixture('sample-controller.ts');
       const sourceFile = project.getSourceFiles()[0];
-      const controllers = parser.parseControllers(sourceFile!);
+      if (!sourceFile) throw new Error('Source file not found');
+      const controllers = parser.parseControllers(sourceFile);
       const postRoute = controllers[0]?.routes.find((r) => r.method === 'POST');
 
       expect(postRoute).toBeDefined();
@@ -71,7 +74,8 @@ describe('DecoratorParser', () => {
     it('should set DELETE route expectedStatus to 204 from @HttpCode', () => {
       const project = createProjectWithFixture('sample-controller.ts');
       const sourceFile = project.getSourceFiles()[0];
-      const controllers = parser.parseControllers(sourceFile!);
+      if (!sourceFile) throw new Error('Source file not found');
+      const controllers = parser.parseControllers(sourceFile);
       const deleteRoute = controllers[0]?.routes.find((r) => r.method === 'DELETE');
 
       expect(deleteRoute).toBeDefined();
@@ -81,7 +85,8 @@ describe('DecoratorParser', () => {
     it('should mark POST route as authenticated from @UseGuards', () => {
       const project = createProjectWithFixture('sample-controller.ts');
       const sourceFile = project.getSourceFiles()[0];
-      const controllers = parser.parseControllers(sourceFile!);
+      if (!sourceFile) throw new Error('Source file not found');
+      const controllers = parser.parseControllers(sourceFile);
       const postRoute = controllers[0]?.routes.find((r) => r.method === 'POST');
 
       expect(postRoute?.isAuthenticated).toBe(true);
@@ -90,7 +95,8 @@ describe('DecoratorParser', () => {
     it('should extract query params "page" and "limit" for GET /', () => {
       const project = createProjectWithFixture('sample-controller.ts');
       const sourceFile = project.getSourceFiles()[0];
-      const controllers = parser.parseControllers(sourceFile!);
+      if (!sourceFile) throw new Error('Source file not found');
+      const controllers = parser.parseControllers(sourceFile);
       const findAllRoute = controllers[0]?.routes.find(
         (r) => r.method === 'GET' && r.methodName === 'findAll',
       );
@@ -112,7 +118,8 @@ describe('DecoratorParser', () => {
     it('should extract body type "CreateTourDto" for POST route', () => {
       const project = createProjectWithFixture('sample-controller.ts');
       const sourceFile = project.getSourceFiles()[0];
-      const controllers = parser.parseControllers(sourceFile!);
+      if (!sourceFile) throw new Error('Source file not found');
+      const controllers = parser.parseControllers(sourceFile);
       const postRoute = controllers[0]?.routes.find((r) => r.method === 'POST');
 
       expect(postRoute?.bodyType).toBe('CreateTourDto');
@@ -121,7 +128,8 @@ describe('DecoratorParser', () => {
     it('should build correct full paths', () => {
       const project = createProjectWithFixture('sample-controller.ts');
       const sourceFile = project.getSourceFiles()[0];
-      const controllers = parser.parseControllers(sourceFile!);
+      if (!sourceFile) throw new Error('Source file not found');
+      const controllers = parser.parseControllers(sourceFile);
       const routes = controllers[0]?.routes ?? [];
 
       const fullPaths = routes.map((r) => r.fullPath);

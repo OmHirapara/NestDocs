@@ -1,4 +1,4 @@
-import { IsString, IsNumber, IsOptional, IsNotEmpty, MinLength, MaxLength, Min, Max, IsEmail, IsEnum } from 'class-validator';
+import { IsString, IsNumber, IsOptional, IsNotEmpty, MinLength, MaxLength, Min, Max, IsEnum } from 'class-validator';
 
 export enum TourCategory {
   ADVENTURE = 'adventure',

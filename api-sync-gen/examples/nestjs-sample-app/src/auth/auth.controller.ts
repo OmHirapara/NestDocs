@@ -5,19 +5,19 @@ import { LoginDto } from './dto/login.dto';
 export class AuthController {
   @Post('login')
   @HttpCode(200)
-  login(@Body() _loginDto: LoginDto) {
+  login(@Body() _loginDto: LoginDto): Record<string, string> {
     return { accessToken: 'jwt-token' };
   }
 
   @Post('refresh')
   @HttpCode(200)
-  refresh(@Body('refreshToken') _refreshToken: string) {
+  refresh(@Body('refreshToken') _refreshToken: string): Record<string, string> {
     return { accessToken: 'new-jwt-token' };
   }
 
   @Post('logout')
   @HttpCode(204)
-  logout() {
+  logout(): void {
     return;
   }
 }

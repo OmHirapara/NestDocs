@@ -23,8 +23,8 @@ const config: ApiSyncConfig = {
       staging: { baseUrl: 'https://staging-api.tourmate.com', authToken: '{{STAGING_TOKEN}}' },
     },
     workspace: {
-      apiKey: process.env.POSTMAN_API_KEY!,
-      workspaceId: process.env.POSTMAN_WORKSPACE_ID!,
+      apiKey: process.env.POSTMAN_API_KEY ?? '',
+      workspaceId: process.env.POSTMAN_WORKSPACE_ID ?? '',
     },
     tests: {
       generateStatusTests: true,
@@ -36,10 +36,13 @@ const config: ApiSyncConfig = {
     enabled: !!process.env.CLAUDE_API_KEY,
     provider: 'claude',
     apiKey: process.env.CLAUDE_API_KEY,
+    model: process.env.CLAUDE_MODEL, // Optional: defaults to claude-3-5-sonnet if not set
     features: {
       autoDescribeEndpoints: true,
       autoGenerateExamples: true,
       autoGenerateTestScripts: true,
+      autoGeneratePreRequest: true,
+      inferReturnTypes: true,
     },
   },
   output: { pretty: true, overwrite: true, backup: true },
