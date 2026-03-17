@@ -31,8 +31,8 @@ describe('DtoParser', () => {
     it('should extract CreateTourDto with 5 properties', () => {
       const project = createProjectWithFixture('sample-dto.ts');
       const sourceFile = project.getSourceFiles()[0];
-      expect(sourceFile).toBeDefined();
-      const schemas = parser.parseDtos(sourceFile!);
+      if (!sourceFile) throw new Error('Source file not found');
+      const schemas = parser.parseDtos(sourceFile);
 
       expect(schemas).toHaveLength(1);
       expect(schemas[0]?.name).toBe('CreateTourDto');
@@ -42,7 +42,8 @@ describe('DtoParser', () => {
     it('should parse "name" as string, required, minLength 3, maxLength 100', () => {
       const project = createProjectWithFixture('sample-dto.ts');
       const sourceFile = project.getSourceFiles()[0];
-      const schemas = parser.parseDtos(sourceFile!);
+      if (!sourceFile) throw new Error('Source file not found');
+      const schemas = parser.parseDtos(sourceFile);
       const nameProperty = schemas[0]?.properties.find((p) => p.name === 'name');
 
       expect(nameProperty).toBeDefined();
@@ -55,7 +56,8 @@ describe('DtoParser', () => {
     it('should parse "price" as number, required, min 0, max 999999', () => {
       const project = createProjectWithFixture('sample-dto.ts');
       const sourceFile = project.getSourceFiles()[0];
-      const schemas = parser.parseDtos(sourceFile!);
+      if (!sourceFile) throw new Error('Source file not found');
+      const schemas = parser.parseDtos(sourceFile);
       const priceProperty = schemas[0]?.properties.find((p) => p.name === 'price');
 
       expect(priceProperty).toBeDefined();
@@ -68,7 +70,8 @@ describe('DtoParser', () => {
     it('should parse "duration" as number, required, min 1', () => {
       const project = createProjectWithFixture('sample-dto.ts');
       const sourceFile = project.getSourceFiles()[0];
-      const schemas = parser.parseDtos(sourceFile!);
+      if (!sourceFile) throw new Error('Source file not found');
+      const schemas = parser.parseDtos(sourceFile);
       const durationProperty = schemas[0]?.properties.find((p) => p.name === 'duration');
 
       expect(durationProperty).toBeDefined();
@@ -80,7 +83,8 @@ describe('DtoParser', () => {
     it('should parse "category" as enum with 3 values', () => {
       const project = createProjectWithFixture('sample-dto.ts');
       const sourceFile = project.getSourceFiles()[0];
-      const schemas = parser.parseDtos(sourceFile!);
+      if (!sourceFile) throw new Error('Source file not found');
+      const schemas = parser.parseDtos(sourceFile);
       const categoryProperty = schemas[0]?.properties.find((p) => p.name === 'category');
 
       expect(categoryProperty).toBeDefined();
@@ -95,7 +99,8 @@ describe('DtoParser', () => {
     it('should parse "description" as string, NOT required (IsOptional)', () => {
       const project = createProjectWithFixture('sample-dto.ts');
       const sourceFile = project.getSourceFiles()[0];
-      const schemas = parser.parseDtos(sourceFile!);
+      if (!sourceFile) throw new Error('Source file not found');
+      const schemas = parser.parseDtos(sourceFile);
       const descProperty = schemas[0]?.properties.find((p) => p.name === 'description');
 
       expect(descProperty).toBeDefined();

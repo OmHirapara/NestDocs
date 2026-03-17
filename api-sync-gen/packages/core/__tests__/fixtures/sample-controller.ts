@@ -1,33 +1,33 @@
 import { Controller, Get, Post, Put, Delete, Param, Body, Query, UseGuards, HttpCode } from './mock-decorators.js';
-import { CreateTourDto } from './sample-dto';
+import { CreateTourDto } from './sample-dto.js';
 
 @Controller('tours')
 export class ToursController {
   @Get()
-  findAll(@Query('page') page?: string, @Query('limit') limit?: string) {
+  findAll(@Query('page') _page?: string, @Query('limit') _limit?: string): unknown[] {
     return [];
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') _id: string): Record<string, unknown> {
     return {};
   }
 
   @Post()
   @HttpCode(201)
   @UseGuards()
-  create(@Body() createTourDto: CreateTourDto) {
+  create(@Body() _createTourDto: CreateTourDto): Record<string, unknown> {
     return {};
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() dto: CreateTourDto) {
+  update(@Param('id') _id: string, @Body() _dto: CreateTourDto): Record<string, unknown> {
     return {};
   }
 
   @Delete(':id')
   @HttpCode(204)
-  remove(@Param('id') id: string) {
+  remove(@Param('id') _id: string): void {
     return;
   }
 }

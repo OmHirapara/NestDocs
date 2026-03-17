@@ -2,17 +2,19 @@
   "name": "@company/api-sync-core",
   "version": "1.0.0",
   "description": "Shared core for api-sync-gen — AST scanner, AI provider, config loader",
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.js",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs",
-      "types": "./dist/index.d.ts"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
@@ -24,6 +26,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.27.0",
+    "class-validator": "^0.15.1",
     "cosmiconfig": "^9.0.0",
     "dotenv": "^16.4.0",
     "openai": "^4.67.0",

@@ -144,14 +144,60 @@ export class PathBuilder {
       description: this.getDefaultDescription(route.expectedStatus),
       content: {
         'application/json': {
-          schema: route.returnType
-            ? { $ref: `#/components/schemas/${route.returnType}` }
-            : { type: 'object' as const },
+          schema: this.resolveResponseSchema(route.returnType, _schemaMap),
         },
       },
     };
 
     return { [statusCode]: response };
+  }
+
+  /**
+   * Resolves the return type to an OpenAPI schema.
+   */
+  private resolveResponseSchema(
+    returnType: string | undefined,
+    schemaMap: SchemaMap,
+  ): OpenAPIV3.ReferenceObject | OpenAPIV3.SchemaObject {
+    if (!returnType || returnType === 'void') {
+      return { type: 'object' };
+    }
+
+    // 1. Direct match in schemaMap
+    if (returnType in schemaMap) {
+      return { $ref: `#/components/schemas/${returnType}` };
+    }
+
+    // 2. Handle Arrays (e.g., UserDto[] or unknown[])
+    if (returnType.endsWith('[]')) {
+      const itemType = returnType.slice(0, -2);
+      return {
+        type: 'array',
+        items: this.resolveResponseSchema(itemType, schemaMap),
+      };
+    }
+
+    // 3. Handle Record/Object types
+    if (returnType.startsWith('Record<') || returnType === 'object' || returnType.includes('{')) {
+      return { type: 'object' };
+    }
+
+    // 4. Handle Promise wrapper (NestJS often returns Promise<T>)
+    if (returnType.startsWith('Promise<')) {
+      const match = returnType.match(/Promise<(.+)>/);
+      if (match) {
+        return this.resolveResponseSchema(match[1], schemaMap);
+      }
+    }
+
+    // 5. Primitive types
+    const primitive = returnType.toLowerCase();
+    if (primitive === 'string') return { type: 'string' };
+    if (primitive === 'number') return { type: 'number' };
+    if (primitive === 'boolean') return { type: 'boolean' };
+
+    // Fallback
+    return { type: 'object' };
   }
 
   /**
