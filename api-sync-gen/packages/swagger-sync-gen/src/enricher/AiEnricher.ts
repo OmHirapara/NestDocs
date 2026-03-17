@@ -37,8 +37,9 @@ export class AiEnricher {
             ...route,
             ...(description ? { description } : {}),
           });
-        } catch {
-          this.logger.warn(`Failed to enrich route: ${route.method} ${route.fullPath}`);
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : String(error);
+          this.logger.warn(`Failed to enrich route: ${route.method} ${route.fullPath} - ${errorMessage}`);
           enrichedRoutes.push({ ...route });
         }
 
@@ -91,8 +92,9 @@ export class AiEnricher {
         };
 
         enriched[name] = enrichedDto;
-      } catch {
-        this.logger.warn(`Failed to enrich schema: ${name}`);
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        this.logger.warn(`Failed to enrich schema: ${name} - ${errorMessage}`);
         enriched[name] = dto;
       }
     }

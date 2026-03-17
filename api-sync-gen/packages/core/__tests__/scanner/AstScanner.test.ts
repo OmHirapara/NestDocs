@@ -1,5 +1,4 @@
 import { Project } from 'ts-morph';
-import * as path from 'node:path';
 describe('AstScanner', () => {
   describe('findControllerFiles', () => {
     it('should find files containing @Controller decorator', () => {

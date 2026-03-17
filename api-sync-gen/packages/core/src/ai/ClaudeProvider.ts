@@ -7,7 +7,7 @@ import { AiProviderError } from '../errors.js';
 /**
  * Default model for Claude API calls.
  */
-const DEFAULT_MODEL = 'claude-sonnet-4-5';
+const DEFAULT_MODEL = 'claude-3-5-sonnet-20240620';
 
 /**
  * Default rate limit (requests per minute).

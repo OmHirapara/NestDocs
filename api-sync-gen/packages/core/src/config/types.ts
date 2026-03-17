@@ -335,7 +335,7 @@ export function resolveConfig(config: ApiSyncConfig): ResolvedApiSyncConfig {
       enabled: aiEnabled,
       provider: config.ai?.provider ?? 'claude',
       apiKey: aiApiKey,
-      model: config.ai?.model ?? (config.ai?.provider === 'openai' ? 'gpt-4o' : 'claude-sonnet-4-5'),
+      model: config.ai?.model ?? (config.ai?.provider === 'openai' ? 'gpt-4o' : 'claude-3-5-sonnet-20240620'),
       features: {
         autoDescribeEndpoints: config.ai?.features?.autoDescribeEndpoints ?? true,
         autoGenerateExamples: config.ai?.features?.autoGenerateExamples ?? true,

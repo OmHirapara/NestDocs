@@ -15,42 +15,42 @@ export class ToursController {
     @Query('difficulty') _difficulty?: string,
     @Query('minPrice') _minPrice?: string,
     @Query('maxPrice') _maxPrice?: string,
-  ) {
+  ): unknown[] {
     return [];
   }
 
   @Get('featured')
-  getFeatured() {
+  getFeatured(): unknown[] {
     return [];
   }
 
   @Get(':id')
-  findOne(@Param('id') _id: string) {
+  findOne(@Param('id') _id: string): Record<string, unknown> {
     return {};
   }
 
   @Post()
   @HttpCode(201)
   @UseGuards()
-  create(@Body() _createTourDto: CreateTourDto) {
+  create(@Body() _createTourDto: CreateTourDto): Record<string, unknown> {
     return {};
   }
 
   @Patch(':id')
   @UseGuards()
-  update(@Param('id') _id: string, @Body() _updateTourDto: UpdateTourDto) {
+  update(@Param('id') _id: string, @Body() _updateTourDto: UpdateTourDto): Record<string, unknown> {
     return {};
   }
 
   @Delete(':id')
   @HttpCode(204)
   @UseGuards()
-  remove(@Param('id') _id: string) {
+  remove(@Param('id') _id: string): void {
     return;
   }
 
   @Get(':id/bookings')
-  getTourBookings(@Param('id') _id: string) {
+  getTourBookings(@Param('id') _id: string): unknown[] {
     return [];
   }
 }
