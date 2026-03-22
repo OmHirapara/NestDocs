@@ -1,0 +1,64 @@
+name: API Sync — Generate & Push
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'examples/nestjs-sample-app/src/**'
+      - 'packages/**'
+      - 'apps/cli/**'
+  workflow_dispatch: # Allow manual trigger
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  api-sync:
+    name: Generate Docs & Push to Postman
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: examples/nestjs-sample-app
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: .
+
+      - name: Build all packages
+        run: npm run build
+        working-directory: .
+
+      - name: Generate Swagger & Postman Collection
+        run: node ../../apps/cli/dist/index.js all
+        env:
+          POSTMAN_API_KEY: ${{ secrets.POSTMAN_API_KEY }}
+          POSTMAN_WORKSPACE_ID: ${{ secrets.POSTMAN_WORKSPACE_ID }}
+          CLAUDE_API_KEY: ${{ secrets.CLAUDE_API_KEY }}
+          CLAUDE_MODEL: ${{ secrets.CLAUDE_MODEL }}
+
+      - name: Upload generated docs as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-docs
+          path: |
+            examples/nestjs-sample-app/docs/swagger.json
+            examples/nestjs-sample-app/docs/collection.json
+          retention-days: 30
+
+      - name: Commit updated docs (if changed)
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/swagger.json docs/collection.json
+          git diff --cached --quiet || git commit -m "docs: auto-update API docs [skip ci]"
+          git push
