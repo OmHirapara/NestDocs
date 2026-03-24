@@ -78,7 +78,7 @@ POSTMAN_WORKSPACE_ID=your-workspace-id
 npx api-sync init
 ```
 
-This creates `api-sync.config.ts` in your project root.
+This creates `api-sync.config.ts` in your project root. The config is a plain exported object, so your Nest project does not need to install `@company/api-sync-core` just to satisfy editor type resolution.
 
 ### Step 3: Generate everything
 

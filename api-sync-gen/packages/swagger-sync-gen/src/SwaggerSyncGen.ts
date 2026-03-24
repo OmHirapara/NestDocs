@@ -42,7 +42,7 @@ export class SwaggerSyncGen {
   public async generate(): Promise<Result<SwaggerOutput, Error>> {
     // Step 1: Scan controller files
     this.logger.info('Scanning NestJS controllers...');
-    const controllerFiles = await this.scanner.findControllerFiles();
+    const controllerFiles = this.scanner.findControllerFiles();
     this.logger.info(`Found ${String(controllerFiles.length)} controller files`);
 
     // Step 2: Parse all routes
@@ -56,7 +56,7 @@ export class SwaggerSyncGen {
     this.logger.info(`Extracted ${String(routeCount)} endpoints`);
 
     // Step 3: Parse all DTOs
-    const dtoFiles = await this.scanner.findDtoFiles();
+    const dtoFiles = this.scanner.findDtoFiles();
     const schemaMap: SchemaMap = {};
     for (const sourceFile of dtoFiles) {
       const schemas = this.dtoParser.parseDtos(sourceFile);
@@ -91,7 +91,21 @@ export class SwaggerSyncGen {
     }
 
     this.logger.info(`✓ swagger.json written to ${this.config.swagger.output}`);
-    return { ok: true, value: { spec: validationResult.value, outputPath: this.config.swagger.output } };
+    return {
+      ok: true,
+      value: { spec: validationResult.value, outputPath: this.config.swagger.output },
+    };
+  }
+
+  /**
+   * Starts the standalone Swagger UI server for a generated spec.
+   */
+  public serve(spec: SwaggerOutput['spec']): void {
+    if (!this.config.swagger.ui.enabled) {
+      return;
+    }
+
+    this.swaggerUiServer.start(spec, this.config.swagger.ui.port, this.config.swagger.ui.path);
   }
 
   /**
@@ -102,11 +116,7 @@ export class SwaggerSyncGen {
     const result = await this.generate();
 
     if (result.ok && this.config.swagger.ui.enabled) {
-      this.swaggerUiServer.start(
-        result.value.spec,
-        this.config.swagger.ui.port,
-        this.config.swagger.ui.path,
-      );
+      this.serve(result.value.spec);
     }
 
     this.fileWatcher.watch(this.config.entry, this.config.exclude, async (_filePath: string) => {
