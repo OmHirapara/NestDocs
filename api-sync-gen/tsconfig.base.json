@@ -4,6 +4,12 @@
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "lib": ["ES2022"],
+    "baseUrl": ".",
+    "paths": {
+      "@company/api-sync-core": ["packages/core/src/index.ts"],
+      "@company/postman-sync-gen": ["packages/postman-sync-gen/src/index.ts"],
+      "@company/swagger-sync-gen": ["packages/swagger-sync-gen/src/index.ts"]
+    },
     "strict": true,
     "strictNullChecks": true,
     "noImplicitAny": true,
