@@ -39,6 +39,10 @@ export function registerSwaggerCommand(program: Command): void {
           handleError(result.error, 'Swagger generation');
         }
 
+        if (options.serve && configResult.value.swagger.ui.enabled) {
+          gen.serve(result.value.spec);
+        }
+
         spinner.succeed(`swagger.json generated → ${result.value.outputPath}`);
       } catch (err: unknown) {
         spinner.fail('Unexpected error');

@@ -41,6 +41,7 @@ export function registerAllCommand(program: Command): void {
       // Step 3: Start Swagger UI
       if (options.serve && config.swagger.ui.enabled) {
         cliLogger.step(3, 5, 'Starting Swagger UI...');
+        swaggerGen.serve(swaggerResult.value.spec);
         const port = config.swagger.ui.port;
         const path = config.swagger.ui.path;
         cliLogger.success(`Swagger UI → http://localhost:${String(port)}${path}`);
@@ -74,7 +75,9 @@ export function registerAllCommand(program: Command): void {
         if (!pushResult.ok) {
           pushSpinner.fail('Workspace push failed');
           cliLogger.warn(`Push failed: ${pushResult.error.message}`);
-          cliLogger.warn('Collection saved locally — import manually or check your POSTMAN_API_KEY');
+          cliLogger.warn(
+            'Collection saved locally — import manually or check your POSTMAN_API_KEY',
+          );
         } else {
           pushSpinner.succeed('Postman Team Workspace updated');
         }

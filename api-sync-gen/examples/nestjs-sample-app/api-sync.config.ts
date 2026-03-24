@@ -1,6 +1,4 @@
-import type { ApiSyncConfig } from '@company/api-sync-core';
-
-const config: ApiSyncConfig = {
+const config = {
   entry: './src',
   exclude: ['**/*.spec.ts', '**/*.test.ts'],
   swagger: {

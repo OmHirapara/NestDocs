@@ -2,9 +2,10 @@ import type { Command } from 'commander';
 import { writeFile, access } from 'node:fs/promises';
 import { cliLogger } from '../utils/logger.js';
 
-const CONFIG_TEMPLATE = `import type { ApiSyncConfig } from '@company/api-sync-core';
+const CONFIG_TEMPLATE = `// To control the Swagger UI Servers dropdown, set SWAGGER_SHOW_SERVERS=false in your environment.
+const SHOW_SERVERS = process.env.SWAGGER_SHOW_SERVERS !== 'false';
 
-const config: ApiSyncConfig = {
+const config = {
   entry: './src',
   exclude: ['**/*.spec.ts', '**/*.test.ts'],
 
@@ -13,9 +14,11 @@ const config: ApiSyncConfig = {
     title: 'My API',
     description: 'Auto-generated API documentation',
     version: '1.0.0',
-    servers: [
-      { url: 'http://localhost:3000', description: 'Local' },
-    ],
+    servers: SHOW_SERVERS
+      ? [
+          { url: 'http://localhost:3000', description: 'Local' },
+        ]
+      : [],
     auth: { type: 'bearer' },
     ui: { enabled: true, port: 3001, path: '/docs' },
   },
