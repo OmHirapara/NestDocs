@@ -65,6 +65,37 @@ export class SwaggerSyncGen {
       }
     }
 
+    // Step 3.5: Resolve any DTOs referenced by controllers but not found via decorators
+    // This handles plain DTO classes without class-validator decorators
+    const missingBodyTypes = new Set<string>();
+    for (const ctrl of endpointMap) {
+      for (const route of ctrl.routes) {
+        if (route.bodyType && !(route.bodyType in schemaMap)) {
+          missingBodyTypes.add(route.bodyType);
+        }
+      }
+    }
+
+    if (missingBodyTypes.size > 0) {
+      this.logger.info(
+        `Resolving ${String(missingBodyTypes.size)} DTO(s) not found via decorators: ${[...missingBodyTypes].join(', ')}`,
+      );
+
+      for (const className of missingBodyTypes) {
+        const sourceFile = this.scanner.findClassSourceFile(className);
+        if (sourceFile) {
+          const schemas = this.dtoParser.parseDtos(sourceFile);
+          for (const schema of schemas) {
+            if (!(schema.name in schemaMap)) {
+              schemaMap[schema.name] = schema;
+            }
+          }
+        } else {
+          this.logger.warn(`Could not find source file for DTO: ${className}`);
+        }
+      }
+    }
+
     this.logger.info(`Parsed ${String(Object.keys(schemaMap).length)} DTO schemas`);
 
     // Step 4: AI enrichment (skipped if AI disabled)
