@@ -50,6 +50,12 @@ export class SchemaBuilder {
       schema.description = dto.description;
     }
 
+    // Build a schema-level example from all properties
+    const schemaExample = this.buildSchemaExample(dto.properties);
+    if (Object.keys(schemaExample).length > 0) {
+      schema.example = schemaExample;
+    }
+
     return schema;
   }
 
@@ -100,11 +106,113 @@ export class SchemaBuilder {
     if (prop.description) {
       schema.description = prop.description;
     }
+
+    // Use existing example if available, otherwise generate one deterministically
     if (prop.example !== undefined) {
       schema.example = prop.example;
+    } else {
+      schema.example = this.generateExample(prop);
     }
 
     return schema;
+  }
+
+  /**
+   * Generates a deterministic example value for a property based on its type,
+   * constraints, and metadata. Used as a fallback when AI enrichment is disabled.
+   */
+  private generateExample(prop: PropertyDefinition): unknown {
+    // Email format
+    if (prop.isEmail) {
+      return 'user@example.com';
+    }
+
+    switch (prop.type) {
+      case 'string': {
+        // Use property name to generate a contextual example
+        const name = prop.name.toLowerCase();
+        if (name.includes('email')) return 'user@example.com';
+        if (name.includes('password')) return 'P@ssw0rd123';
+        if (name.includes('phone')) return '+1234567890';
+        if (name.includes('url') || name.includes('link') || name.includes('website'))
+          return 'https://example.com';
+        if (name.includes('name') && name.includes('first')) return 'John';
+        if (name.includes('name') && name.includes('last')) return 'Doe';
+        if (name.includes('name')) return 'Sample Name';
+        if (name.includes('date') || name.includes('time')) return '2025-01-15T00:00:00.000Z';
+        if (name.includes('description')) return 'A detailed description of the resource.';
+        if (name.includes('title')) return 'Sample Title';
+        if (name.includes('id')) return '550e8400-e29b-41d4-a716-446655440000';
+        if (name.includes('address')) return '123 Main Street';
+        if (name.includes('city')) return 'New York';
+        if (name.includes('country')) return 'US';
+        if (name.includes('location')) return 'Downtown';
+        if (name.includes('color') || name.includes('colour')) return '#FF5733';
+        if (name.includes('image') || name.includes('avatar') || name.includes('photo'))
+          return 'https://example.com/image.jpg';
+
+        // Use minLength to generate a plausible string
+        if (prop.minLength && prop.minLength > 0) {
+          const base = `sample ${prop.name}`;
+          return base.length >= prop.minLength
+            ? base
+            : base + ' '.repeat(prop.minLength - base.length);
+        }
+        return 'string';
+      }
+
+      case 'number': {
+        if (prop.min !== undefined && prop.max !== undefined) {
+          return Math.round((prop.min + prop.max) / 2);
+        }
+        if (prop.min !== undefined) return prop.min;
+        if (prop.max !== undefined) return prop.max;
+        return 0;
+      }
+
+      case 'boolean':
+        return true;
+
+      case 'enum':
+        return prop.enumValues && prop.enumValues.length > 0 ? prop.enumValues[0] : 'value';
+
+      case 'array': {
+        if (prop.arrayItemType === 'string') return ['string'];
+        if (prop.arrayItemType === 'number') return [0];
+        if (prop.arrayItemType === 'boolean') return [true];
+        return ['item'];
+      }
+
+      case 'object':
+        return {};
+
+      default:
+        return 'string';
+    }
+  }
+
+  /**
+   * Builds a complete example object for a schema by combining
+   * generated examples from all its properties.
+   */
+  private buildSchemaExample(
+    properties: readonly PropertyDefinition[],
+  ): Record<string, unknown> {
+    const example: Record<string, unknown> = {};
+
+    for (const prop of properties) {
+      if (prop.type === 'object' && prop.nestedSchema) {
+        // Skip nested $ref objects — Swagger UI resolves them automatically
+        continue;
+      }
+      if (prop.example !== undefined) {
+        example[prop.name] = prop.example;
+      } else {
+        example[prop.name] = this.generateExample(prop);
+      }
+    }
+
+    return example;
   }
 
   /**
@@ -124,6 +232,8 @@ export class SchemaBuilder {
 
     if (prop.enumValues && prop.enumValues.length > 0) {
       schema.enum = [...prop.enumValues];
+      // Use first enum value as example
+      schema.example = prop.enumValues[0];
     }
 
     if (prop.description) {
