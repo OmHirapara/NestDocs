@@ -142,6 +142,21 @@ export class AstScanner {
   }
 
   /**
+   * Finds the source file containing a class with the given name.
+   * Searches all non-excluded source files in the project.
+   * @param className - The name of the class to find
+   * @returns The SourceFile containing the class, or undefined if not found
+   */
+  public findClassSourceFile(className: string): SourceFile | undefined {
+    const sources = this.getSourceFiles();
+
+    return sources.find((sf) => {
+      const classes = sf.getClasses();
+      return classes.some((cls) => cls.getName() === className);
+    });
+  }
+
+  /**
    * Checks whether a file path should be excluded based on the exclude patterns,
    * and always excludes node_modules, test files, and spec files.
    */
