@@ -136,5 +136,19 @@ describe('DecoratorParser', () => {
       expect(fullPaths).toContain('/tours');
       expect(fullPaths).toContain('/tours/:id');
     });
+
+    it('should prepend globalPrefix to all full paths if provided', () => {
+      const globalPrefixParser = new DecoratorParser(logger, 'api/v1');
+      const project = createProjectWithFixture('sample-controller.ts');
+      const sourceFile = project.getSourceFiles()[0];
+      if (!sourceFile) throw new Error('Source file not found');
+      
+      const controllers = globalPrefixParser.parseControllers(sourceFile);
+      const routes = controllers[0]?.routes ?? [];
+
+      const fullPaths = routes.map((r) => r.fullPath);
+      expect(fullPaths).toContain('/api/v1/tours');
+      expect(fullPaths).toContain('/api/v1/tours/:id');
+    });
   });
 });

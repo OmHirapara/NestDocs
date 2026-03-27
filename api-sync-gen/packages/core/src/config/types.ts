@@ -122,6 +122,7 @@ export interface OutputConfig {
  */
 export interface ApiSyncConfig {
   readonly entry: string;
+  readonly globalPrefix?: string;
   readonly exclude?: string[];
   readonly swagger?: SwaggerConfig;
   readonly postman?: PostmanConfig;
@@ -134,6 +135,7 @@ export interface ApiSyncConfig {
  */
 export interface ResolvedApiSyncConfig {
   readonly entry: string;
+  readonly globalPrefix: string;
   readonly exclude: readonly string[];
   readonly swagger: {
     readonly output: string;
@@ -197,6 +199,7 @@ export interface ResolvedApiSyncConfig {
  */
 export const apiSyncConfigSchema = z.object({
   entry: z.string().min(1, 'entry path is required'),
+  globalPrefix: z.string().optional(),
   exclude: z.array(z.string()).optional(),
   swagger: z
     .object({
@@ -298,6 +301,7 @@ export function resolveConfig(config: ApiSyncConfig): ResolvedApiSyncConfig {
 
   return {
     entry: config.entry,
+    globalPrefix: config.globalPrefix ?? '',
     exclude: config.exclude ?? ['node_modules', 'dist', 'test', '__tests__'],
     swagger: {
       output: config.swagger?.output ?? './docs/swagger.json',

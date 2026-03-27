@@ -8,6 +8,7 @@ const SHOW_SERVERS = process.env.SWAGGER_SHOW_SERVERS !== 'false';
 const config = {
   entry: './src',
   exclude: ['**/*.spec.ts', '**/*.test.ts'],
+  globalPrefix: '', // e.g., 'api' or 'api/v1'
 
   swagger: {
     output: './docs/swagger.json',
