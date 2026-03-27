@@ -26,7 +26,7 @@ export function createSwaggerSyncGen(config: ResolvedApiSyncConfig): SwaggerSync
   const logger = createLogger('info');
   const aiProvider = createAiProvider(config);
   const scanner = new AstScanner(config.entry, [...config.exclude], logger);
-  const decoratorParser = new DecoratorParser(logger);
+  const decoratorParser = new DecoratorParser(logger, config.globalPrefix);
   const dtoParser = new DtoParser(logger);
   const schemaBuilder = new SchemaBuilder();
   const pathBuilder = new PathBuilder();
