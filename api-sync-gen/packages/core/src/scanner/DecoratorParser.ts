@@ -45,7 +45,10 @@ const DEFAULT_STATUS_CODES: Record<HttpMethod, number> = {
  * Parses NestJS decorators from source files to extract controller and route definitions.
  */
 export class DecoratorParser {
-  constructor(private readonly logger: Logger) {}
+  constructor(
+    private readonly logger: Logger,
+    private readonly globalPrefix: string = '',
+  ) {}
 
   /**
    * Parses all controllers from a source file.
@@ -116,6 +119,11 @@ export class DecoratorParser {
           fullPath = `/${normalizedPath}`;
         } else {
           fullPath = '/';
+        }
+
+        if (this.globalPrefix) {
+          const cleanGlobalPrefix = this.globalPrefix.replace(/^\/|\/$/g, '');
+          fullPath = fullPath === '/' ? `/${cleanGlobalPrefix}` : `/${cleanGlobalPrefix}${fullPath}`;
         }
 
         const parameters = this.parseParameters(method);
