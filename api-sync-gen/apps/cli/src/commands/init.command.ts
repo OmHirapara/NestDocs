@@ -44,10 +44,13 @@ const config = {
     enabled: !!process.env.CLAUDE_API_KEY,
     provider: 'claude',
     apiKey: process.env.CLAUDE_API_KEY,
+    model: process.env.CLAUDE_MODEL,
     features: {
       autoDescribeEndpoints: true,
       autoGenerateExamples: true,
       autoGenerateTestScripts: true,
+      autoGeneratePreRequest: true,
+      inferReturnTypes: true,
     },
   },
 

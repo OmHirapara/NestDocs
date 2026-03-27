@@ -1,3 +1,5 @@
+const SHOW_SERVERS = process.env.SWAGGER_SHOW_SERVERS !== 'false';
+
 const config = {
   entry: './src',
   exclude: ['**/*.spec.ts', '**/*.test.ts'],
@@ -6,10 +8,9 @@ const config = {
     title: 'TourMate API',
     description: 'Travel tour booking platform API',
     version: '1.0.0',
-    servers: [
-      { url: 'http://localhost:3000', description: 'Local Development' },
-      { url: 'https://staging-api.tourmate.com', description: 'Staging' },
-    ],
+    servers: SHOW_SERVERS
+      ? [{ url: 'http://localhost:3000', description: 'Local Development' }]
+      : undefined,
     auth: { type: 'bearer' },
     ui: { enabled: true, port: 3001, path: '/docs' },
   },
