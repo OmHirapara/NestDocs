@@ -1102,10 +1102,6 @@
     {
       "url": "http://localhost:3000",
       "description": "Local Development"
-    },
-    {
-      "url": "https://staging-api.tourmate.com",
-      "description": "Staging"
     }
   ]
 }

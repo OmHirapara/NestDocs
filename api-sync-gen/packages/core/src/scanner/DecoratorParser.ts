@@ -158,7 +158,17 @@ export class DecoratorParser {
   }
 
   /**
+   * Primitive types that should NOT be expanded into individual properties.
+   */
+  private static readonly PRIMITIVE_TYPES = new Set([
+    'string', 'number', 'boolean', 'bigint', 'symbol', 'undefined', 'null',
+    'String', 'Number', 'Boolean',
+  ]);
+
+  /**
    * Extracts parameters from a method's parameter decorators.
+   * For bare @Query() with complex interface types, expands the interface
+   * properties into individual query parameters.
    */
   private parseParameters(
     method: ReturnType<ReturnType<SourceFile['getClasses']>[number]['getMethods']>[number],
@@ -182,20 +192,107 @@ export class DecoratorParser {
           continue;
         }
 
-        const paramName = this.extractDecoratorStringArg(decorator) ?? param.getName();
-        const paramType = param.getType().getText() ?? 'string';
-        const isOptional = param.hasQuestionToken() || param.hasInitializer();
+        const explicitName = this.extractDecoratorStringArg(decorator);
 
-        params.push({
-          name: paramName,
-          location,
-          type: paramType,
-          required: !isOptional,
-        });
+        // If @Query() has a specific field name like @Query('limit'), treat as single param
+        if (explicitName || location !== 'query') {
+          const paramName = explicitName ?? param.getName();
+          const paramType = param.getType().getText() ?? 'string';
+          const isOptional = param.hasQuestionToken() || param.hasInitializer();
+
+          params.push({
+            name: paramName,
+            location,
+            type: paramType,
+            required: !isOptional,
+          });
+          continue;
+        }
+
+        // Bare @Query() — try to expand the interface type into individual params
+        const paramType = param.getType();
+        const typeText = paramType.getText() ?? 'string';
+
+        // If it's a primitive type, don't expand
+        if (DecoratorParser.PRIMITIVE_TYPES.has(typeText)) {
+          params.push({
+            name: param.getName(),
+            location: 'query',
+            type: typeText,
+            required: !(param.hasQuestionToken() || param.hasInitializer()),
+          });
+          continue;
+        }
+
+        // Resolve interface/class properties (includes inherited ones)
+        const properties = paramType.getProperties();
+
+        if (properties.length === 0) {
+          // Fallback: could not resolve, add as single param
+          params.push({
+            name: param.getName(),
+            location: 'query',
+            type: typeText,
+            required: !(param.hasQuestionToken() || param.hasInitializer()),
+          });
+          continue;
+        }
+
+        this.logger.debug(`Expanding @Query() type '${typeText}' into ${String(properties.length)} individual params`);
+
+        for (const prop of properties) {
+          const propName = prop.getName();
+          const propType = prop.getValueDeclaration()
+            ? prop.getTypeAtLocation(prop.getValueDeclaration()!).getText()
+            : 'string';
+
+          // Check if property is optional (has ? modifier)
+          const isOptional = prop.isOptional();
+
+          // Map complex TS types to simpler OpenAPI-friendly types
+          const resolvedType = this.resolveQueryParamType(propType);
+
+          params.push({
+            name: propName,
+            location: 'query',
+            type: resolvedType,
+            required: !isOptional,
+          });
+        }
       }
     }
 
     return params;
+  }
+
+  /**
+   * Maps a complex TypeScript type to a simpler query parameter type string.
+   * Handles arrays, enums, Record types, and primitives.
+   */
+  private resolveQueryParamType(tsType: string): string {
+    // Handle arrays (string[], number[], etc.)
+    if (tsType.endsWith('[]')) {
+      return tsType;
+    }
+
+    // Handle Array<T> syntax
+    const arrayMatch = tsType.match(/^Array<(.+)>$/);
+    if (arrayMatch) {
+      return `${arrayMatch[1]}[]`;
+    }
+
+    // Handle Record/object types
+    if (tsType.startsWith('Record<') || tsType.startsWith('{')) {
+      return 'object';
+    }
+
+    // Handle union types that look like enums: 'ASC' | 'DESC'
+    if (tsType.includes("'") && tsType.includes('|')) {
+      return 'string';
+    }
+
+    // Primitives pass through
+    return tsType;
   }
 
   /**
