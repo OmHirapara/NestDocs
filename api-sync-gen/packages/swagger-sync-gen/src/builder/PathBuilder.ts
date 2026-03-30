@@ -93,10 +93,43 @@ export class PathBuilder {
       .map((p): OpenAPIV3.ParameterObject => ({
         name: p.name,
         in: p.location as 'path' | 'query',
-        required: p.location === 'path' ? true : p.required,
-        schema: { type: this.mapParamType(p.type) },
+        required: p.location === 'path',
+        schema: this.buildParamSchema(p.type),
         ...(p.description ? { description: p.description } : {}),
       }));
+  }
+
+  /**
+   * Builds an OpenAPI schema object for a parameter type.
+   * Handles arrays (string[]), enums, objects, and primitives.
+   */
+  private buildParamSchema(tsType: string): OpenAPIV3.SchemaObject {
+    // Handle arrays (e.g., string[], number[])
+    if (tsType.endsWith('[]')) {
+      const itemType = tsType.slice(0, -2);
+      return {
+        type: 'array',
+        items: { type: this.mapPrimitiveType(itemType) },
+      };
+    }
+
+    // Handle object/Record types
+    if (tsType === 'object' || tsType.startsWith('Record<') || tsType.startsWith('{')) {
+      return { type: 'object' };
+    }
+
+    // Primitives
+    return { type: this.mapPrimitiveType(tsType) };
+  }
+
+  /**
+   * Maps a TypeScript primitive type string to an OpenAPI type.
+   */
+  private mapPrimitiveType(tsType: string): 'string' | 'number' | 'integer' | 'boolean' {
+    const normalized = tsType.toLowerCase();
+    if (normalized === 'number') return 'number';
+    if (normalized === 'boolean') return 'boolean';
+    return 'string';
   }
 
   /**
@@ -207,15 +240,6 @@ export class PathBuilder {
     return path.replace(/:([a-zA-Z_][a-zA-Z0-9_]*)/g, '{$1}');
   }
 
-  /**
-   * Maps a TypeScript type string to an OpenAPI parameter type.
-   */
-  private mapParamType(tsType: string): 'string' | 'number' | 'integer' | 'boolean' {
-    const normalized = tsType.toLowerCase();
-    if (normalized === 'number') return 'number';
-    if (normalized === 'boolean') return 'boolean';
-    return 'string';
-  }
 
   /**
    * Returns a default description for a given HTTP status code.
